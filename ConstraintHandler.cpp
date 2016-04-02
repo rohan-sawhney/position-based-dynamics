@@ -46,18 +46,22 @@ void ConstraintHandler::generateCollisions(std::vector<Mesh>& meshes)
     clearCollisions();
     
     // add collision constraints
-    for (VertexIter v = meshes[0].vertices.begin(); v != meshes[0].vertices.end(); v++) {
-        Eigen::Vector3d d = v->nPosition - v->position;
-        Eigen::Vector3d q;
-        double hit1 = d.norm(); d /= hit1;
-        double hit2 = INFINITY;
-        int index;
-        if ((index = meshes[1].bvh.getIntersection(RAY_INTERSECTION, hit1, q, v->position, d)) != -1 ||
-            (index = meshes[1].bvh.getIntersection(NEAREST_POINT, hit2, q, v->nPosition)) != -1) {
-            
-            Eigen::Vector3d n = meshes[1].faces[index].normal().normalized();
-            constraints.push_back(new CollisionConstraint(v, q, n));
-        } 
+    for (size_t i = 0; i < meshes.size()-1; i++) {
+        for (size_t j = i+1; j < meshes.size(); j++) {
+            for (VertexIter v = meshes[i].vertices.begin(); v != meshes[i].vertices.end(); v++) {
+                Eigen::Vector3d d = v->nPosition - v->position;
+                Eigen::Vector3d q;
+                double hit1 = d.norm(); d /= hit1;
+                double hit2 = INFINITY;
+                int index;
+                if ((index = meshes[j].bvh.getIntersection(RAY_INTERSECTION, hit1, q, v->position, d)) != -1 ||
+                    (index = meshes[j].bvh.getIntersection(NEAREST_POINT, hit2, q, v->nPosition)) != -1) {
+                    
+                    Eigen::Vector3d n = meshes[j].faces[index].normal().normalized();
+                    constraints.push_back(new CollisionConstraint(v, q, n));
+                }
+            }
+        }
     }
 }
 

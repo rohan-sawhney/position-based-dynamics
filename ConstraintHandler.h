@@ -33,7 +33,7 @@ private:
     
     // member variables
     std::vector<Constraint *> constraints;
-    double count;
+    int count;
 };
 
 #endif
