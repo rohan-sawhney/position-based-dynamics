@@ -26,6 +26,15 @@ Eigen::Vector3d Face::centroid() const
     return (a + b + c) / 3.0;
 }
 
+double Face::area() const
+{
+    if (isBoundary()) {
+        return 0;
+    }
+    
+    return 0.5 * normal().norm();
+}
+
 BoundingBox Face::boundingBox() const
 {
     if (isBoundary()) {

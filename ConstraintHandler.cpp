@@ -24,17 +24,17 @@ void ConstraintHandler::generateConstraints(const double& kStretch, const double
     if (!mesh.isRigid) {
         for (EdgeCIter e = mesh.edges.begin(); e != mesh.edges.end(); e++) {
             // add stretching constraint
-            constraints.push_back(new StretchingConstraint(e->he->vertex, e->he->next->vertex, kStretch));
             count++;
+            constraints.push_back(new StretchingConstraint(e->he->vertex, e->he->next->vertex, kStretch));
             
             if (!e->isBoundary()) {
                 // add bending constraint
+                count++;
                 constraints.push_back(new BendingConstraint(e->he->vertex,
                                                             e->he->next->vertex,
                                                             e->he->next->next->vertex,
                                                             e->he->flip->next->next->vertex,
                                                             kBend));
-                count++;
             }
         }
     }

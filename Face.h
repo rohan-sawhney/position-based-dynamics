@@ -21,6 +21,9 @@ public:
     // returns centroid
     Eigen::Vector3d centroid() const;
     
+    // returns face area
+    double area() const;
+    
     // computes the bounding box of the face
     BoundingBox boundingBox() const;
     

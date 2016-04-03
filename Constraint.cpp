@@ -121,7 +121,8 @@ CollisionConstraint::CollisionConstraint(VertexIter v1, const Eigen::Vector3d& q
                                          const Eigen::Vector3d& normal0):
 Constraint(1, 1.0),
 normal(normal0),
-q(q0)
+q(q0),
+didSolve(false)
 {
     vs = { v1 };
 }
@@ -135,16 +136,18 @@ void CollisionConstraint::solve()
 {
     VertexIter& v1(vs[0]);
     
-    // TODO: this is not an equality constraint
-    
     // compute and add correction
     double lambda = normal.dot(v1->nPosition-q);
-    v1->nPosition -= lambda*normal;
+    if (lambda >= 0) {
+        v1->nPosition -= lambda*normal;
+        didSolve = true;
+    }
 }
 
 void CollisionConstraint::updateVelocity()
 {
-    // TODO: Do this only if constrained correction is performed
-    VertexIter& v1(vs[0]);
-    v1->velocity -= v1->velocity.dot(normal)*normal;
+    if (didSolve) {
+        VertexIter& v1(vs[0]);
+        v1->velocity -= v1->velocity.dot(normal)*normal;
+    }
 }

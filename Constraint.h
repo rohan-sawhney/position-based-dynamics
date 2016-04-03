@@ -79,6 +79,9 @@ public:
     // normal
     Eigen::Vector3d normal;
     
+    // flag
+    bool didSolve;
+    
     // solves collision constraint
     void solve();
     

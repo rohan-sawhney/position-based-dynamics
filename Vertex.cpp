@@ -37,10 +37,10 @@ Eigen::Vector3d Vertex::normal() const
         Eigen::Vector3d e1 = h->flip->vertex->position - position;
         Eigen::Vector3d e2 = h->flip->next->flip->vertex->position - position;
         
-        double c = e1.dot(e2) / sqrt(e1.dot(e1) * e2.dot(e2));
-        if (c < -1.0) c = -1.0;
-        else if (c >  1.0) c = 1.0;
-        angle = acos(c);
+        double d = e1.dot(e2) / sqrt(e1.squaredNorm() * e2.squaredNorm());
+        if (d < -1.0) d = -1.0;
+        else if (d >  1.0) d = 1.0;
+        angle = acos(d);
         
         n = h->face->normal();
         if (n.squaredNorm() == 0.0) {
