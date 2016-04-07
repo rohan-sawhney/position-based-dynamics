@@ -40,7 +40,42 @@ void ConstraintHandler::generateConstraints(const double& kStretch, const double
     }
 }
 
-void ConstraintHandler::generateCollisions(std::vector<Mesh>& meshes)
+void addStaticCollisionConstraints(Mesh& m1, Mesh& m2, std::vector<Constraint *>& constraints,
+                                   const double& friction, const double& restitution)
+{
+    for (VertexIter v = m1.vertices.begin(); v != m1.vertices.end(); v++) {
+        Eigen::Vector3d d = v->nPosition - v->position;
+        Eigen::Vector3d q;
+        double hit1 = d.norm(); d /= hit1;
+        double hit2 = INFINITY;
+        int index;
+        if ((index = m2.bvh.getIntersection(RAY_INTERSECTION, hit1, q, v->position, d)) != -1 ||
+            (index = m2.bvh.getIntersection(NEAREST_POINT, hit2, q, v->nPosition)) != -1) {
+            
+            Eigen::Vector3d n = m2.faces[index].normal().normalized();
+            constraints.push_back(new StaticCollisionConstraint(v, q, n, friction, restitution));
+        }
+    }
+}
+
+void addTrianglePointCollisionConstraints(Mesh& m1, Mesh& m2, std::vector<Constraint *>& constraints,
+                                          const double& friction, const double& restitution)
+{
+    for (FaceIter f = m1.faces.begin(); f != m1.faces.end(); f++) {
+        Eigen::Vector3d n;
+        double hit = INFINITY;
+        int index;
+        if ((index = m2.bvh.getIntersection(NEAREST_POINT_INV, hit, n, n, n, &(*f))) != -1) {
+            VertexIter vj = m2.vertices.begin() + index;
+            constraints.push_back(new TrianglePointCollisionConstraint(vj, f->he->vertex, f->he->next->vertex,
+                                                                       f->he->next->next->vertex, n,
+                                                                       friction, restitution));
+        }
+    }
+}
+
+void ConstraintHandler::generateCollisions(std::vector<Mesh>& meshes, const double& friction,
+                                           const double& restitution)
 {
     // clear any previous collisions
     clearCollisions();
@@ -48,19 +83,8 @@ void ConstraintHandler::generateCollisions(std::vector<Mesh>& meshes)
     // add collision constraints
     for (size_t i = 0; i < meshes.size()-1; i++) {
         for (size_t j = i+1; j < meshes.size(); j++) {
-            for (VertexIter v = meshes[i].vertices.begin(); v != meshes[i].vertices.end(); v++) {
-                Eigen::Vector3d d = v->nPosition - v->position;
-                Eigen::Vector3d q;
-                double hit1 = d.norm(); d /= hit1;
-                double hit2 = INFINITY;
-                int index;
-                if ((index = meshes[j].bvh.getIntersection(RAY_INTERSECTION, hit1, q, v->position, d)) != -1 ||
-                    (index = meshes[j].bvh.getIntersection(NEAREST_POINT, hit2, q, v->nPosition)) != -1) {
-                    
-                    Eigen::Vector3d n = meshes[j].faces[index].normal().normalized();
-                    constraints.push_back(new CollisionConstraint(v, q, n));
-                }
-            }
+            addStaticCollisionConstraints(meshes[i], meshes[j], constraints, friction, restitution);
+            addTrianglePointCollisionConstraints(meshes[i], meshes[j], constraints, friction, restitution);
         }
     }
 }

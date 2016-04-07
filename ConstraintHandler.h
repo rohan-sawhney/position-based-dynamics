@@ -16,7 +16,7 @@ public:
     void generateConstraints(const double& kStretch, const double& kBend, Mesh& mesh);
     
     // generate collisions
-    void generateCollisions(std::vector<Mesh>& meshes);
+    void generateCollisions(std::vector<Mesh>& meshes, const double& friction, const double& restitution);
     
     // project constraints
     void projectConstraints();

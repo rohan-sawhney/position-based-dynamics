@@ -23,7 +23,7 @@ public:
     // solves position constraint
     virtual void solve() = 0;
     
-    // update velocity
+    // updates velocity
     virtual void updateVelocity() = 0;
 };
 
@@ -41,7 +41,7 @@ public:
     // solves stretching constraint
     void solve();
     
-    // update velocity
+    // updates velocity
     void updateVelocity();
 };
 
@@ -61,17 +61,18 @@ public:
     // solves bending constraint
     void solve();
     
-    // update velocity
+    // updates velocity
     void updateVelocity();
 };
 
-class CollisionConstraint: public Constraint {
+class StaticCollisionConstraint: public Constraint {
 public:
     // constructor
-    CollisionConstraint(VertexIter v1, const Eigen::Vector3d& q0, const Eigen::Vector3d& normal0);
+    StaticCollisionConstraint(VertexIter v1, const Eigen::Vector3d& q0, const Eigen::Vector3d& normal0,
+                              const double& friction0, const double& restitution0);
     
     // destructor
-    ~CollisionConstraint();
+    ~StaticCollisionConstraint();
     
     // collision point
     Eigen::Vector3d q;
@@ -79,14 +80,51 @@ public:
     // normal
     Eigen::Vector3d normal;
     
+    // friction
+    double friction;
+    
+    // restitution
+    double restitution;
+    
     // flag
     bool didSolve;
     
     // solves collision constraint
     void solve();
     
-    // update velocity
+    // updates velocity
     void updateVelocity();
+};
+
+class TrianglePointCollisionConstraint: public Constraint {
+public:
+    // constructor
+    TrianglePointCollisionConstraint(VertexIter v1, VertexIter v2,
+                                     VertexIter v3, VertexIter v4,
+                                     const Eigen::Vector3d& normal0,
+                                     const double& friction0, const double& restitution0);
+    
+    // destructor
+    ~TrianglePointCollisionConstraint();
+    
+    // normal
+    Eigen::Vector3d normal;
+    
+    // friction
+    double friction;
+    
+    // restitution
+    double restitution;
+    
+    // flag
+    bool didSolve;
+    
+    // solves collision constraint
+    void solve();
+    
+    // updates velocity
+    void updateVelocity();
+    
 };
 
 #endif 

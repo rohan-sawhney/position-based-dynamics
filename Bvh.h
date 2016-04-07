@@ -2,6 +2,7 @@
 #define BVH_H
 #define RAY_INTERSECTION 0
 #define NEAREST_POINT 1
+#define NEAREST_POINT_INV 2
 
 #include "Types.h"
 #include "BoundingBox.h"
@@ -22,8 +23,10 @@ public:
     void build(Mesh *mesh0);
     
     // returns face index
-    int getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
-                        const Eigen::Vector3d& o, const Eigen::Vector3d& d = Eigen::Vector3d::Zero()) const;
+    int getIntersection(const int& mode, double& hit,
+                        Eigen::Vector3d& q, const Eigen::Vector3d& o,
+                        const Eigen::Vector3d& d = Eigen::Vector3d::Zero(),
+                        const Face *f = NULL) const;
     
 private:
     int nodeCount, leafCount, leafSize;

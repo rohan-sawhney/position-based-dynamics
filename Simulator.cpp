@@ -3,6 +3,8 @@
 #define TIME_STEP 0.01
 #define K_STRETCH 1.0
 #define K_BEND 1.0
+#define FRICTION 1.0
+#define RESTITUTION 1.0
 #define MAX_ITERS 5
 const Eigen::Vector3d gravity(0.0, -9.8, 0.0);
 
@@ -37,6 +39,14 @@ void updatePositionAndVelocity(VertexIter v)
 
 void Simulator::step()
 {
+    // TODO:
+    // 1) Add friction and restitution
+    // 2) Figure out inequality constraint for static collision
+    // 3) Damp Velocities
+    // 4) Add Triangle Point collision constraint
+    // 5) Unconditionally stable tests
+    // 6) Multithread
+    
     // step explicit euler
     for (size_t i = 0; i < meshes.size(); i++) {
         for (VertexIter v = meshes[i].vertices.begin(); v != meshes[i].vertices.end(); v++) {
@@ -44,8 +54,10 @@ void Simulator::step()
         }
     }
     
+    // TODO: damp velocity
+    
     // generate collisions
-    constraintHandler.generateCollisions(meshes);
+    constraintHandler.generateCollisions(meshes, FRICTION, RESTITUTION);
     
     // project constraints
     for (int i = 0; i < MAX_ITERS; i++) {

@@ -32,6 +32,9 @@ public:
     
     // get point triangle distance
     double nearestPoint(const Eigen::Vector3d& p, Eigen::Vector3d& q) const;
+        
+    // checks whether point is contained in prism
+    bool containsPointInPrism(const Eigen::Vector3d& p, double& dist) const;
 };
 
 #endif

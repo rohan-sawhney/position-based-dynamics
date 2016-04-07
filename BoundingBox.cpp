@@ -142,3 +142,20 @@ bool BoundingBox::intersect(const Eigen::Vector3d& p, double& dist) const
     dist = INFINITY;
     return false;
 }
+
+bool BoundingBox::intersect(const BoundingBox& boundingBox, double& dist) const
+{
+    Eigen::Vector3d bMin = boundingBox.min;
+    Eigen::Vector3d bMax = boundingBox.max;
+    
+    if (((min.x() <= bMin.x() && bMin.x() <= max.x()) || (bMin.x() <= min.x() && min.x() <= bMax.x())) &&
+        ((min.y() <= bMin.y() && bMin.y() <= max.y()) || (bMin.y() <= min.y() && min.y() <= bMax.y())) &&
+        ((min.z() <= bMin.z() && bMin.z() <= max.z()) || (bMin.z() <= min.z() && min.z() <= bMax.z()))) {
+        
+        dist = 0;
+        return true;
+    }
+    
+    dist = INFINITY;
+    return false;
+}

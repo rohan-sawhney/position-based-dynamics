@@ -27,6 +27,9 @@ public:
     // check if point is contained in bounding box
     bool intersect(const Eigen::Vector3d& p, double& dist) const;
     
+    // check if bounding boxes intersect
+    bool intersect(const BoundingBox& boundingBox, double& dist) const;
+    
     // member variables
     Eigen::Vector3d min;
     Eigen::Vector3d max;

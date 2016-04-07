@@ -125,7 +125,8 @@ void Bvh::build(Mesh *mesh0)
 }
 
 int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
-                         const Eigen::Vector3d& o, const Eigen::Vector3d& d) const
+                         const Eigen::Vector3d& o, const Eigen::Vector3d& d,
+                         const Face *f) const
 {
     int id = 0;
     int closer, further;
@@ -137,8 +138,14 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
     if (hit < EPSILON) return -1;
     
     TraversalEntry t(id, -INFINITY);
+    BoundingBox bbox;
+    
     if (mode == RAY_INTERSECTION) flatTree[id].boundingBox.intersect(o, d, t.d);
     else if (mode == NEAREST_POINT) flatTree[id].boundingBox.intersect(o, t.d);
+    else if (mode == NEAREST_POINT_INV) {
+        bbox = f->boundingBox();
+        flatTree[id].boundingBox.intersect(bbox, t.d);
+    }
     
     std::stack<TraversalEntry> stack;
     stack.push(t);
@@ -154,8 +161,11 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
         // node is a leaf
         if (node.rightOffset == 0) {
             for (int i = 0; i < node.range; i++) {
+                const Face& face(mesh->faces[node.startId+i]);
+                if (face.isBoundary()) continue;
+                
                 if (mode == RAY_INTERSECTION) {
-                    double dist = mesh->faces[node.startId+i].intersect(o, d);
+                    double dist = face.intersect(o, d);
                     if (dist < hit) {
                         index = node.startId + i;
                         q = o + dist*d;
@@ -164,12 +174,29 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
                     
                 } else if (mode == NEAREST_POINT) {
                     Eigen::Vector3d p;
-                    double dist = mesh->faces[node.startId+i].nearestPoint(o, p);
+                    double dist = face.nearestPoint(o, p);
                     if (dist < hit) {
                         index = node.startId + i;
                         q = p;
                         hit = dist;
                     }
+                
+                } else if (mode == NEAREST_POINT_INV) {
+                    HalfEdgeIter h = face.he;
+                    do {
+                        if (index != h->vertex->index) {
+                            double dist;
+                            if (f->containsPointInPrism(h->vertex->position, dist)) {
+                                if (dist < hit) {
+                                    q = face.normal().normalized();
+                                    index = h->vertex->index;
+                                    hit = dist;
+                                }
+                            }
+                        }
+                        
+                        h = h->next;
+                    } while (h != face.he);
                 }
             }
             
@@ -182,6 +209,10 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
             } else if (mode == NEAREST_POINT) {
                 hit0 = flatTree[id+1].boundingBox.intersect(o, dist1);
                 hit1 = flatTree[id+node.rightOffset].boundingBox.intersect(o, dist2);
+            
+            } else if (mode == NEAREST_POINT_INV) {
+                hit0 = flatTree[id+1].boundingBox.intersect(bbox, dist1);
+                hit1 = flatTree[id+node.rightOffset].boundingBox.intersect(bbox, dist2);
             }
             
             // hit both bounding boxes
