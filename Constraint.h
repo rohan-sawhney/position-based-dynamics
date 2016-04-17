@@ -101,7 +101,6 @@ public:
     // constructor
     TrianglePointCollisionConstraint(VertexIter v1, VertexIter v2,
                                      VertexIter v3, VertexIter v4,
-                                     const Eigen::Vector3d& normal0,
                                      const double& friction0, const double& restitution0);
     
     // destructor

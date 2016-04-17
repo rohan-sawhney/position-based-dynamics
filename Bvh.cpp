@@ -188,7 +188,6 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
                             double dist;
                             if (f->containsPointInPrism(h->vertex->position, dist)) {
                                 if (dist < hit) {
-                                    q = face.normal().normalized();
                                     index = h->vertex->index;
                                     hit = dist;
                                 }

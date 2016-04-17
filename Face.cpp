@@ -14,7 +14,7 @@ Eigen::Vector3d Face::normal() const
     const Eigen::Vector3d& b(he->next->vertex->position);
     const Eigen::Vector3d& c(he->next->next->vertex->position);
     
-    return (a-b).cross(c-b);
+    return (b-a).cross(c-a);
 }
 
 Eigen::Vector3d Face::centroid() const

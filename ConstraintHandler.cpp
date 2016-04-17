@@ -61,14 +61,14 @@ void addStaticCollisionConstraints(Mesh& m1, Mesh& m2, std::vector<Constraint *>
 void addTrianglePointCollisionConstraints(Mesh& m1, Mesh& m2, std::vector<Constraint *>& constraints,
                                           const double& friction, const double& restitution)
 {
+    Eigen::Vector3d q;
     for (FaceIter f = m1.faces.begin(); f != m1.faces.end(); f++) {
-        Eigen::Vector3d n;
         double hit = INFINITY;
         int index;
-        if ((index = m2.bvh.getIntersection(NEAREST_POINT_INV, hit, n, n, n, &(*f))) != -1) {
+        if ((index = m2.bvh.getIntersection(NEAREST_POINT_INV, hit, q, q, q, &(*f))) != -1) {
             VertexIter vj = m2.vertices.begin() + index;
             constraints.push_back(new TrianglePointCollisionConstraint(vj, f->he->vertex, f->he->next->vertex,
-                                                                       f->he->next->next->vertex, n,
+                                                                       f->he->next->next->vertex,
                                                                        friction, restitution));
         }
     }

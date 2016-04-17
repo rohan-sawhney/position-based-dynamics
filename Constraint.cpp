@@ -159,16 +159,15 @@ void StaticCollisionConstraint::updateVelocity()
 
 TrianglePointCollisionConstraint::TrianglePointCollisionConstraint(VertexIter v1, VertexIter v2,
                                                                    VertexIter v3, VertexIter v4,
-                                                                   const Eigen::Vector3d& normal0,
                                                                    const double& friction0,
                                                                    const double& restitution0):
 Constraint(4, 1.0),
-normal(normal0),
 friction(friction0),
 restitution(restitution0),
 didSolve(false)
 {
     vs = { v1, v2, v3, v4 };
+    normal = (v3->nPosition-v2->nPosition).cross(v4->nPosition-v2->nPosition);
 }
 
 TrianglePointCollisionConstraint::~TrianglePointCollisionConstraint()
@@ -178,6 +177,7 @@ TrianglePointCollisionConstraint::~TrianglePointCollisionConstraint()
 
 void TrianglePointCollisionConstraint::solve()
 {
+    /*
     VertexIter& v1(vs[0]);
     VertexIter& v2(vs[1]);
     VertexIter& v3(vs[2]);
@@ -187,14 +187,14 @@ void TrianglePointCollisionConstraint::solve()
     Eigen::Vector3d u = v1->nPosition-v2->nPosition;
     Eigen::Vector3d v = v3->nPosition-v2->nPosition;
     Eigen::Vector3d w = v4->nPosition-v2->nPosition;
-    Eigen::Vector3d n = v.cross(w);
-    double dn = n.norm(); n /= dn;
+    double dn = normal.norm();
+    normal /= dn;
     
-    double lambda = u.dot(n);
+    double lambda = u.dot(normal);
     if (lambda < 0) {
-        Eigen::Vector3d q1 = n;
-        Eigen::Vector3d q3 = (w.cross(u) + n.cross(w)*lambda) / dn;
-        Eigen::Vector3d q4 = -(v.cross(u) + n.cross(v)*lambda) / dn;
+        Eigen::Vector3d q1 = normal;
+        Eigen::Vector3d q3 = (w.cross(u) + normal.cross(w)*lambda) / dn;
+        Eigen::Vector3d q4 = -(v.cross(u) + normal.cross(v)*lambda) / dn;
         Eigen::Vector3d q2 = -(q1 + q3 + q4);
         
         double sum = v1->invMass*q1.squaredNorm() +
@@ -204,18 +204,20 @@ void TrianglePointCollisionConstraint::solve()
         if (sum < EPSILON) return;
         lambda /= sum;
         
-        v1->nPosition -= v1->invMass*lambda*q1;
         v2->nPosition -= v2->invMass*lambda*q2;
         v3->nPosition -= v3->invMass*lambda*q3;
         v4->nPosition -= v4->invMass*lambda*q4;
         
         didSolve = true;
     }
+    */
 }
 
 void TrianglePointCollisionConstraint::updateVelocity()
 {
+    /*
     if (didSolve) {
+        // incorrect
         VertexIter& v2(vs[1]);
         VertexIter& v3(vs[2]);
         VertexIter& v4(vs[3]);
@@ -232,5 +234,6 @@ void TrianglePointCollisionConstraint::updateVelocity()
         vt = v4->velocity - vn;
         v4->velocity = friction*vt + restitution*vn;
     }
+    */
 }
 
