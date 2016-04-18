@@ -40,10 +40,8 @@ void updatePositionAndVelocity(VertexIter v)
 void Simulator::step()
 {
     // TODO:
-    // 1) Add Triangle Point collision constraint
+    // 1) Fix Triangle Point collision constraint
     // 2) Damp Velocities
-    // 3) Unconditionally stable tests
-    // 4) Multithread
     
     // step explicit euler
     for (size_t i = 0; i < meshes.size(); i++) {

@@ -2,6 +2,7 @@
 #include "MeshIO.h"
 
 Mesh::Mesh():
+thickness(0.0),
 isRigid(false)
 {
     

@@ -160,10 +160,12 @@ void StaticCollisionConstraint::updateVelocity()
 TrianglePointCollisionConstraint::TrianglePointCollisionConstraint(VertexIter v1, VertexIter v2,
                                                                    VertexIter v3, VertexIter v4,
                                                                    const double& friction0,
-                                                                   const double& restitution0):
+                                                                   const double& restitution0,
+                                                                   const double& h0):
 Constraint(4, 1.0),
 friction(friction0),
 restitution(restitution0),
+h(h0),
 didSolve(false)
 {
     vs = { v1, v2, v3, v4 };
@@ -195,7 +197,7 @@ void TrianglePointCollisionConstraint::solve()
     double dn = normal.norm();
     normal /= dn;
     
-    double lambda = u.dot(normal);
+    double lambda = u.dot(normal) - h;
     if (lambda < 0) {
         Eigen::Vector3d q1 = normal;
         Eigen::Vector3d q3 = (w.cross(u) + normal.cross(w)*lambda) / dn;

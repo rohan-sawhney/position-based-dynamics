@@ -31,6 +31,7 @@ public:
     std::vector<Face> faces;
     std::vector<HalfEdgeIter> boundaries;
     Bvh bvh;
+    double thickness;
     bool isRigid;
 };
 
