@@ -51,7 +51,7 @@ void loadMeshes()
     meshes.push_back(Mesh());
     
     ClothGenerator clothGenerator;
-    success = clothGenerator.generate(2.0, 0.0, 20, meshes[0]) && meshes[1].read(path);
+    success = clothGenerator.generate(2.0, 0.0, 25, meshes[0]) && meshes[1].read(path);
     if (success) {
         meshes[1].normalize(-0.5, 2.0);
         meshes[1].isRigid = true;

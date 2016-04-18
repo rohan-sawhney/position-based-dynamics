@@ -101,7 +101,7 @@ public:
     // constructor
     TrianglePointCollisionConstraint(VertexIter v1, VertexIter v2,
                                      VertexIter v3, VertexIter v4,
-                                     const double& friction0, const double& restitution0, const double& h0);
+                                     const double& h0, const double& friction0, const double& restitution0);
     
     // destructor
     ~TrianglePointCollisionConstraint();
@@ -109,14 +109,14 @@ public:
     // normal
     Eigen::Vector3d normal;
     
+    // thickness
+    double h;
+    
     // friction
     double friction;
     
     // restitution
     double restitution;
-    
-    // thickness
-    double h;
     
     // flag
     bool didSolve;

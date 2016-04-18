@@ -75,8 +75,8 @@ void ConstraintHandler::generateCollisions(std::vector<Mesh>& meshes, const doub
                     constraints.push_back(new TrianglePointCollisionConstraint(vj, f->he->vertex,
                                                                                f->he->next->vertex,
                                                                                f->he->next->next->vertex,
-                                                                               friction, restitution,
-                                                                               meshes[i].thickness));
+                                                                               meshes[i].thickness,
+                                                                               friction, restitution));
                 }
             }
         }

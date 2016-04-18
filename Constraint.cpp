@@ -159,13 +159,13 @@ void StaticCollisionConstraint::updateVelocity()
 
 TrianglePointCollisionConstraint::TrianglePointCollisionConstraint(VertexIter v1, VertexIter v2,
                                                                    VertexIter v3, VertexIter v4,
+                                                                   const double& h0,
                                                                    const double& friction0,
-                                                                   const double& restitution0,
-                                                                   const double& h0):
+                                                                   const double& restitution0):
 Constraint(4, 1.0),
+h(h0),
 friction(friction0),
 restitution(restitution0),
-h(h0),
 didSolve(false)
 {
     vs = { v1, v2, v3, v4 };
