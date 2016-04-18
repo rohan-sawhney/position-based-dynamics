@@ -152,7 +152,7 @@ bool BoundingBox::intersect(const BoundingBox& boundingBox, double& dist) const
         ((min.y() <= bMin.y() && bMin.y() <= max.y()) || (bMin.y() <= min.y() && min.y() <= bMax.y())) &&
         ((min.z() <= bMin.z() && bMin.z() <= max.z()) || (bMin.z() <= min.z() && min.z() <= bMax.z()))) {
         
-        dist = 0;
+        dist = 0.0;
         return true;
     }
     

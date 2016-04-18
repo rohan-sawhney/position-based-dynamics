@@ -23,35 +23,25 @@ bool Vertex::isIsolated() const
 
 Eigen::Vector3d Vertex::normal() const
 {
-    Eigen::Vector3d normal;
-    Eigen::Vector3d n;
-    normal.setZero();
+    Eigen::Vector3d normal = Eigen::Vector3d::Zero();
+    if (isIsolated()) return normal;
     
-    if (isIsolated()) {
-        return normal;
-    }
-    
-    double angle;
     HalfEdgeCIter h = he;
     do {
-        Eigen::Vector3d e1 = h->flip->vertex->position - position;
-        Eigen::Vector3d e2 = h->flip->next->flip->vertex->position - position;
+        Eigen::Vector3d e1 = h->next->vertex->position - position;
+        Eigen::Vector3d e2 = h->next->next->vertex->position - position;
         
         double d = e1.dot(e2) / sqrt(e1.squaredNorm() * e2.squaredNorm());
         if (d < -1.0) d = -1.0;
         else if (d >  1.0) d = 1.0;
-        angle = acos(d);
+        double angle = acos(d);
         
-        n = h->face->normal();
-        if (n.squaredNorm() == 0.0) {
-            n.setZero();
-        }
-        
+        Eigen::Vector3d n = h->face->normal();
         normal += angle * n;
         
         h = h->flip->next;
     } while (h != he);
     
-    normal.normalize();
+    if (!normal.isZero()) normal.normalize();
     return normal;
 }

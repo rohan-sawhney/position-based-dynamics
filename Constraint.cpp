@@ -153,7 +153,7 @@ void StaticCollisionConstraint::updateVelocity()
         VertexIter& v1(vs[0]);
         Eigen::Vector3d vn = v1->velocity.dot(normal)*normal;
         Eigen::Vector3d vt = v1->velocity - vn;
-        v1->velocity = friction*vt + restitution*vn;
+        v1->velocity = friction*vt - restitution*vn;
     }
 }
 
@@ -178,6 +178,11 @@ TrianglePointCollisionConstraint::~TrianglePointCollisionConstraint()
 void TrianglePointCollisionConstraint::solve()
 {
     /*
+    // TODO:
+    // 1) check corretness
+    // 2) Account for sign
+    // 3) handle velocities
+    
     VertexIter& v1(vs[0]);
     VertexIter& v2(vs[1]);
     VertexIter& v3(vs[2]);
@@ -224,15 +229,15 @@ void TrianglePointCollisionConstraint::updateVelocity()
         
         Eigen::Vector3d vn = v2->velocity.dot(normal)*normal;
         Eigen::Vector3d vt = v2->velocity - vn;
-        v2->velocity = friction*vt + restitution*vn;
+        v2->velocity = friction*vt - restitution*vn;
         
         vn = v3->velocity.dot(normal)*normal;
         vt = v3->velocity - vn;
-        v3->velocity = friction*vt + restitution*vn;
+        v3->velocity = friction*vt - restitution*vn;
 
         vn = v4->velocity.dot(normal)*normal;
         vt = v4->velocity - vn;
-        v4->velocity = friction*vt + restitution*vn;
+        v4->velocity = friction*vt - restitution*vn;
     }
     */
 }

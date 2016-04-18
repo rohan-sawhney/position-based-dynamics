@@ -209,14 +209,18 @@ bool containsPoint(const Eigen::Vector3d& a, const Eigen::Vector3d& b,
 
 bool Face::containsPointInPrism(const Eigen::Vector3d& p, double& dist) const
 {
+    double d1;
     bool hit1 = containsPoint(he->vertex->position,
                               he->next->vertex->position,
                               he->next->next->vertex->position,
-                              p, dist);
+                              p, d1);
+    
+    double d2;
     bool hit2 = containsPoint(he->vertex->nPosition,
                               he->next->vertex->nPosition,
                               he->next->next->vertex->nPosition,
-                              p, dist);
+                              p, d2);
     
+    dist = std::min(d1, d2);
     return hit1 && hit2;
 }
