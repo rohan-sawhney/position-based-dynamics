@@ -19,7 +19,7 @@ bool ClothGenerator::generate(const double& extent, const double& base,
     double shift = 0.0;
     for (double y = end; y >= start; y -= inc) {
         for (double x = start; x <= end; x += inc) {
-            data.positions.push_back(Eigen::Vector3d(x, y / 2.0 + shift, base - shift));
+            data.positions.push_back(Eigen::Vector3d(x, y / 2.0 + shift, base + shift));
         }
         shift += 0.05;
     }

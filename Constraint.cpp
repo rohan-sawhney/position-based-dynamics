@@ -179,12 +179,7 @@ TrianglePointCollisionConstraint::~TrianglePointCollisionConstraint()
 
 void TrianglePointCollisionConstraint::solve()
 {
-    /*
-    // TODO:
-    // 1) check corretness
-    // 2) Account for sign
-    // 3) handle velocities
-    
+    // TODO: check correctness
     VertexIter& v1(vs[0]);
     VertexIter& v2(vs[1]);
     VertexIter& v3(vs[2]);
@@ -197,11 +192,12 @@ void TrianglePointCollisionConstraint::solve()
     double dn = normal.norm();
     normal /= dn;
     
-    double lambda = u.dot(normal) - h;
+    double un = u.dot(normal);
+    double lambda = un - h;
     if (lambda < 0) {
         Eigen::Vector3d q1 = normal;
-        Eigen::Vector3d q3 = (w.cross(u) + normal.cross(w)*lambda) / dn;
-        Eigen::Vector3d q4 = -(v.cross(u) + normal.cross(v)*lambda) / dn;
+        Eigen::Vector3d q3 = (-w.cross(u) + normal.cross(w)*un) / dn;
+        Eigen::Vector3d q4 = (v.cross(u) - normal.cross(v)*un) / dn;
         Eigen::Vector3d q2 = -(q1 + q3 + q4);
         
         double sum = v1->invMass*q1.squaredNorm() +
@@ -211,17 +207,18 @@ void TrianglePointCollisionConstraint::solve()
         if (sum < EPSILON) return;
         lambda /= sum;
         
+        v1->nPosition -= v1->invMass*lambda*q1;
         v2->nPosition -= v2->invMass*lambda*q2;
         v3->nPosition -= v3->invMass*lambda*q3;
         v4->nPosition -= v4->invMass*lambda*q4;
         
         didSolve = true;
     }
-    */
 }
 
 void TrianglePointCollisionConstraint::updateVelocity()
 {
+    // TODO: handle velocities correctly
     /*
     if (didSolve) {
         // incorrect

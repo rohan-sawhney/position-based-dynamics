@@ -209,6 +209,7 @@ bool containsPoint(const Eigen::Vector3d& a, const Eigen::Vector3d& b,
 
 bool Face::containsPointInPrism(const Eigen::Vector3d& p, double& dist) const
 {
+    // TODO: check whether point is in between planes
     double d1;
     bool hit1 = containsPoint(he->vertex->position,
                               he->next->vertex->position,
