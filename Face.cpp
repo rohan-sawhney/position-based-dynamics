@@ -209,18 +209,11 @@ bool containsPoint(const Eigen::Vector3d& a, const Eigen::Vector3d& b,
 
 bool Face::containsPoint(const Eigen::Vector3d& p, double& dist) const
 {
-    double d1;
-    bool hit1 = ::containsPoint(he->vertex->position,
-                                he->next->vertex->position,
-                                he->next->next->vertex->position,
-                                p, d1);
-    
-    double d2;
-    bool hit2 = ::containsPoint(he->vertex->nPosition,
-                                he->next->vertex->nPosition,
-                                he->next->next->vertex->nPosition,
-                                p, d2);
-    
-    dist = std::min(d1, d2);
-    return hit1 && hit2;
+    // TODO: point must be between triangles
+    return ::containsPoint(he->vertex->position,
+                           he->next->vertex->position,
+                           he->next->next->vertex->position, p, dist) &&
+           ::containsPoint(he->vertex->nPosition,
+                           he->next->vertex->nPosition,
+                           he->next->next->vertex->nPosition, p, dist);
 }

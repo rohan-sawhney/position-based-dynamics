@@ -168,6 +168,7 @@ friction(friction0),
 restitution(restitution0),
 didSolve(false)
 {
+    // TODO: determine correct normal direction
     vs = { v1, v2, v3, v4 };
     normal = (v3->nPosition-v2->nPosition).cross(v4->nPosition-v2->nPosition);
 }
