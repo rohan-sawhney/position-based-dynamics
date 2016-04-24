@@ -221,7 +221,6 @@ void TrianglePointCollisionConstraint::updateVelocity()
     // TODO: handle velocities correctly
     /*
     if (didSolve) {
-        // incorrect
         VertexIter& v2(vs[1]);
         VertexIter& v3(vs[2]);
         VertexIter& v4(vs[3]);

@@ -124,6 +124,18 @@ void Bvh::build(Mesh *mesh0)
     }
 }
 
+void computeBox(BoundingBox& bbox, const Face *f)
+{
+    bbox.expandToInclude(f->he->vertex->position);
+    bbox.expandToInclude(f->he->vertex->nPosition);
+    
+    bbox.expandToInclude(f->he->next->vertex->position);
+    bbox.expandToInclude(f->he->next->vertex->nPosition);
+    
+    bbox.expandToInclude(f->he->next->next->vertex->position);
+    bbox.expandToInclude(f->he->next->next->vertex->nPosition);
+}
+
 int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
                          const Eigen::Vector3d& o, const Eigen::Vector3d& d,
                          const Face *f) const
@@ -143,7 +155,7 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
     if (mode == RAY_INTERSECTION) flatTree[id].boundingBox.intersect(o, d, t.d);
     else if (mode == NEAREST_POINT) flatTree[id].boundingBox.intersect(o, t.d);
     else if (mode == NEAREST_POINT_INV) {
-        bbox = f->boundingBox();
+        computeBox(bbox, f);
         flatTree[id].boundingBox.intersect(bbox, t.d);
     }
     
@@ -186,7 +198,7 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
                     do {
                         if (index != h->vertex->index) {
                             double dist;
-                            if (f->containsPointInPrism(h->vertex->position, dist)) {
+                            if (f->containsPoint(h->vertex->position, dist)) {
                                 if (dist < hit) {
                                     index = h->vertex->index;
                                     hit = dist;
