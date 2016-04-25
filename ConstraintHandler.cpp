@@ -69,7 +69,7 @@ void ConstraintHandler::generateCollisions(std::vector<Mesh>& meshes, const doub
             for (FaceIter f = meshes[i].faces.begin(); f != meshes[i].faces.end(); f++) {
                 if (!f->isBoundary()) {
                     Eigen::Vector3d q;
-                    double hit = INFINITY;
+                    double hit = -INFINITY;
                     int index;
                     if ((index = meshes[j].bvh.getIntersection(NEAREST_POINT_INV, hit, q, q, q, &(*f))) != -1) {
                         VertexIter vj = meshes[j].vertices.begin() + index;

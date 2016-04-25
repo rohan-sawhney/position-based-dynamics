@@ -147,7 +147,7 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
     double dist1 = 0.0, dist2 = 0.0;
     int index = -1;
     
-    if (hit < EPSILON) return -1;
+    if (std::abs(hit) < EPSILON) return -1;
     
     TraversalEntry t(id, -INFINITY);
     BoundingBox bbox;
@@ -166,8 +166,6 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
         TraversalEntry t = stack.top();
         id = t.id;
         stack.pop();
-        
-        if (hit <= t.d) continue;
         
         const Node &node(flatTree[id]);
         // node is a leaf
@@ -199,7 +197,7 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
                         if (index != h->vertex->index) {
                             double dist;
                             if (f->containsPoint(h->vertex->position, dist)) {
-                                if (dist < hit) {
+                                if (hit < dist) {
                                     index = h->vertex->index;
                                     hit = dist;
                                 }

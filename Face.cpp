@@ -179,41 +179,30 @@ double Face::nearestPoint(const Eigen::Vector3d& p, Eigen::Vector3d& q) const
     return (p-q).norm();
 }
 
-bool containsPoint(const Eigen::Vector3d& a, const Eigen::Vector3d& b,
-                   const Eigen::Vector3d& c, const Eigen::Vector3d& p, double& dist)
+bool inPlane(const Eigen::Vector3d& a, const Eigen::Vector3d& b,
+             const Eigen::Vector3d& c, const Eigen::Vector3d& p)
 {
-    Eigen::Vector3d v1 = b - a;
-    Eigen::Vector3d v2 = c - a;
-    Eigen::Vector3d v3 = p - a;
+    Eigen::Vector3d n = (b-a).cross(c-a).normalized();
+    double d = -n.dot(a);
+    return n.dot(p) + d > 0.0;
+}
+
+bool Face::containsPoint(const Eigen::Vector3d& p, double& dist) const
+{
+    const Eigen::Vector3d& a(he->vertex->position);
+    const Eigen::Vector3d& b(he->next->vertex->position);
+    const Eigen::Vector3d& c(he->next->next->vertex->position);
+    const Eigen::Vector3d& d(he->vertex->nPosition);
+    const Eigen::Vector3d& e(he->next->vertex->nPosition);
+    const Eigen::Vector3d& f(he->next->next->vertex->nPosition);
     
-    double dot11 = v1.dot(v1);
-    double dot12 = v1.dot(v2);
-    double dot13 = v1.dot(v3);
-    double dot22 = v2.dot(v2);
-    double dot23 = v2.dot(v3);
-    
-    // compute barycentric coordinates
-    double invDen = 1 / (dot11*dot22 - dot12*dot12);
-    double v = (dot22*dot13 - dot12*dot23) * invDen;
-    double w = (dot11*dot23 - dot12*dot13) * invDen;
-    double u = 1 - v - w;
-    
-    if ((u >= 0) && (v >= 0) && (u + v <= 1)) {
-        dist = (p - (u*a + v*b + w*c)).norm();
+    if (inPlane(a, d, b, p) && inPlane(c, b, f, p) && inPlane(a, c, d, p) &&
+        (inPlane(a, b, c, p) != inPlane(d, e, f, p))) {
+        
+        dist = (p - (d + e + f) / 3.0).norm();
         return true;
     }
     
     dist = INFINITY;
     return false;
-}
-
-bool Face::containsPoint(const Eigen::Vector3d& p, double& dist) const
-{
-    // TODO: point must be between triangles
-    return ::containsPoint(he->vertex->position,
-                           he->next->vertex->position,
-                           he->next->next->vertex->position, p, dist) &&
-           ::containsPoint(he->vertex->nPosition,
-                           he->next->vertex->nPosition,
-                           he->next->next->vertex->nPosition, p, dist);
 }
