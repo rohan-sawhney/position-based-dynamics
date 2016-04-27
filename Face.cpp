@@ -196,11 +196,16 @@ bool Face::containsPoint(const Eigen::Vector3d& p, double& dist) const
     const Eigen::Vector3d& e(he->next->vertex->nPosition);
     const Eigen::Vector3d& f(he->next->next->vertex->nPosition);
     
-    if (inPlane(a, d, b, p) && inPlane(c, b, f, p) && inPlane(a, c, d, p) &&
-        (inPlane(a, b, c, p) != inPlane(d, e, f, p))) {
+    if (inPlane(a, b, c, p) != inPlane(d, e, f, p)) {
+        int count = 0;
+        if (inPlane(a, d, b, p)) count++;
+        if (inPlane(c, b, f, p)) count++;
+        if (inPlane(a, c, d, p)) count++;
         
-        dist = (p - (d + e + f) / 3.0).norm();
-        return true;
+        if (count == 0 || count == 3) {
+            dist = (p - (d + e + f) / 3.0).norm();
+            return true;
+        }
     }
     
     dist = INFINITY;
