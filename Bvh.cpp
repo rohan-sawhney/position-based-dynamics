@@ -151,13 +151,7 @@ int Bvh::getIntersection(const int& mode, double& hit, Eigen::Vector3d& q,
     
     TraversalEntry t(id, -INFINITY);
     BoundingBox bbox;
-    
-    if (mode == RAY_INTERSECTION) flatTree[id].boundingBox.intersect(o, d, t.d);
-    else if (mode == NEAREST_POINT) flatTree[id].boundingBox.intersect(o, t.d);
-    else if (mode == NEAREST_POINT_INV) {
-        computeBox(bbox, f);
-        flatTree[id].boundingBox.intersect(bbox, t.d);
-    }
+    if (mode == NEAREST_POINT_INV) computeBox(bbox, f);
     
     std::stack<TraversalEntry> stack;
     stack.push(t);
